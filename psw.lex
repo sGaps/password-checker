@@ -16,7 +16,7 @@ digit   [0-9]
 special [\=\*\-\_\.\@\&]
 white   [ \t]
 noperm  [^A-Za-z0-9\=\*\-\_\.\@\&\n]|{white}
-end     [\n]
+end     [\n]|[\n\r]|[\r]
 
 %%
 

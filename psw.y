@@ -32,9 +32,9 @@ void yyerror(const char* s) {
 %%
 
 Password
-    : %empty
-    | END
-    | List END { printf("DONE.\n"); }
+    : Password END      { printf("JUST EMPTY.\n"); }
+    | Password List END { printf("DONE.\n"); }
+    |
     ;
 
 List
