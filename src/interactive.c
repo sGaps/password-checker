@@ -10,13 +10,13 @@ void reset_password( Password* psw ){
 
 void password_resume( Password* psw ){
     if( password_is_valid(psw) ) {
+        // Indica que la cadena es válida con formato:
         printf( "\n" );
         printf( "    * La contraseña ingresada ( %s ) es válida.\n\n" , password_str(psw) );
     }
     else {
-        fprintf( stderr , "\n" );
-        fprintf( stderr , "    . Contraseña: %s\n" , password_str(psw) );
-        fprintf( stderr , "\n" );
+        // Muestra los errores con formato:
+        fprintf( stderr , "\n    . Contraseña: %s\n\n" , password_str(psw) );
 
         password_describe_errors( psw , stderr );
         fprintf( stderr , "\n" );
@@ -24,10 +24,10 @@ void password_resume( Password* psw ){
 }
 
 void report_and_prepare( Password* psw ){
-    password_commit(psw);
-    password_resume(psw);
-    reset_password (psw); 
-    printf( PROMPT );
+    password_commit(psw);   // Finaliza la escritura de la cadena.
+    password_resume(psw);   // Muestra los resultados de su validez.
+    reset_password (psw);   // Reinicia la cadena para el siguiente ciclo.
+    printf( PROMPT );       // Muestra el prompt
 }
 
 #undef PROMPT

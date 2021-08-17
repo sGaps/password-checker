@@ -4,22 +4,28 @@
 
 %{
 
+/// @file lexer.lex
+/// @brief Contiene el analizador léxico del programa.
+/// @author Gabriel Peraza
+/// @version 0.1.0
+/// @date 2021-08-17
+
 // Preliminar C Code here
 #include <stdio.h>
 #include "parser.tab.h"
-#include "types/password.h"
+#include "interactive.h"
 
+/// @brief macro creada para depurar las ocurrencias
+///        obtenidas de la entrada estándar.
 #define ECHO printf( "MATCH: %s\n", yytext )
 
-// Shared functions:
+// Funciones compartidas:
 extern void yyerror( void* );
 extern void reset_password ( Password* psw );
-extern void password_resume( Password* psw );
 extern int  fileno(FILE *__stream) __THROW __wur;
 
 // Globals:
-extern Password* global_psw;
-extern YYSTYPE yylval;
+extern YYSTYPE   yylval;
 
 %}
 

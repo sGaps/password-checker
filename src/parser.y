@@ -1,17 +1,35 @@
 %{
+/// @file parser.y
+/// @brief Contiene la gramática del parser junto
+///        
+/// @author Gabriel Peraza
+/// @version 0.1.0
+/// @date 2021-08-17
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "types/password.h"
+#include "interactive.h"
+
+
+/// @brief valor de retorno de la variable global `yylval`.
 #define YYSTYPE char
+
+/// @brief Analizador léxico
+/// @return Valor del TOKEN obtenido.
 extern int yylex();
 
-Password* global_psw;
+/// @brief Referencia a la contraseña. Es definida en `src-bin/main.c`.
+extern Password* global_psw;
 
-void reset_password    ( Password* psw );
-void report_and_prepare( Password* psw );
-void password_resume   ( Password* psw );
-void yyerror(const char* s);
+// funciones de `interactive.h`
+extern void reset_password    ( Password* psw );
+extern void report_and_prepare( Password* psw );
+extern void password_resume   ( Password* psw );
+
+/// @brief Reporta los errores de sintaxis.
+/// @param s. mensaje a escribir antes de salir con errores.
+void yyerror( const char* s );
 
 %}
 
@@ -53,7 +71,7 @@ Good
 %%
 
 
-void yyerror(const char* s) {
+void yyerror( const char* s ) {
     fprintf( stderr , "Error de sitaxis: %s\n" , s );
     exit( 1 );
 }

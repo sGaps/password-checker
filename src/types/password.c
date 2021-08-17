@@ -1,37 +1,52 @@
 #include <stdio.h>
 #include <string.h>
 #include "password.h"
+
 // local:
+/// @brief Subrutina local. Inserta un caracter en la estructura
+///        interna de la contraeña y registra el número de
+///        repeticiones consecutivas del caracter.
+/// @param psw. Contraseña a modificar.
+/// @param c. Caracter de entrada
+///
+/// @return 1 si fue posible insertar el caracter. 0 en caso contrario.
 static int password_priv_push_char( Password* psw , char c );
 
 void password_init( Password* psw ){
-    psw->len       = 0;             // linked with body.
+    // Reinicia todos los contadores internos
+    psw->len       = 0;             // relacionado con body.
     psw->uppercase = 0;
     psw->lowercase = 0;
     psw->special   = 0;
     psw->digit     = 0;
 
-    psw->invalid         = 0;       // linked with invalids.
-    psw->last_repetition = 0;       // last count:
+    psw->invalid         = 0;       // relacionado con invalids.
+    psw->last_repetition = 0;
 
-    psw->illegal_repetitions = 0;   // linked with repeats.
+    psw->illegal_repetitions = 0;   // relacionado con repeats.
 }
 
 void password_from_str( Password* psw , char* str ){
+    // Prepara la cadena para insertar caracteres:
     password_init( psw );
+
+    // Inserta los caracteres de str uno a uno.
     char* head;
     for( head = str ; *head != '\0' ; head += 1 )
         password_push_char( psw , *head );
+
+    // Finaliza el proceso de construcción de la contraseña.
     password_commit( psw );
 }
 
 void password_commit( Password* psw ){
+    // Finaliza el proceso de construcción de la contraseña.
     unsigned short end = (psw->len > PASSWORD_BUFFER-1) ? PASSWORD_BUFFER-1 : psw->len;
     psw->body[end]     = '\0';
 }
 
-// returns 1 if all done correctly, 0 otherwise
 void password_push_char( Password* psw , char c ){
+    // Inserta un caracter según su tipo:
     if     ( 'A' <= c && c <= 'Z' )         password_push_uppercase( psw , c );
     else if( 'a' <= c && c <= 'z' )         password_push_lowercase( psw , c );
     else if( '0' <= c && c <= '9' )         password_push_digit    ( psw , c );
@@ -39,27 +54,31 @@ void password_push_char( Password* psw , char c ){
     else                                    password_push_invalid  ( psw , c );
 }
 
-// returns 1 if all done correctly, 0 otherwise
 static int password_priv_push_char( Password* psw , char c ){
+    // Finaliza si la capacidad de psw no es suficiente para almacenar c.
     if( psw->len >= PASSWORD_BUFFER-1 ) return 0;
     
-    // Updates repetition count:
+    // Actualiza el contador de repeticiones:
     if( psw->len > 0 && psw->body[psw->len-1] == c ) {
         psw->last_repetition += 1;
 
-        if( psw->last_repetition == REPEAT_LIMIT ) {            // Detects an illegal repetition.
-            psw->repeats[psw->illegal_repetitions] = psw->len;  // register the position where an invalid repetition occurs
-            psw->illegal_repetitions += 1;                      // updates the illegal repetition count.
+        // Registra cuando ocurre una repetición ilegal.
+        if( psw->last_repetition > REPEAT_LIMIT ) {             // Detecta una repetición ilegal.
+            psw->repeats[psw->illegal_repetitions] = psw->len;  // registra la posicion donde ocurre. (un índice)
+            psw->illegal_repetitions += 1;                      // actualiza el número de repeticiones ilegales.
         }
     } else {
+        // Reestablece la cadena de entrada:
         psw->last_repetition = 1;
     }
 
+    // Reestablece la cadena de entrada:
     psw->body[psw->len] = c;
     psw->len           += 1;
     return 1;
 }
 
+// Documentadas en `src/types/password.h`
 int password_too_long     ( Password* psw ){ return psw->len > PASSWORD_MAX_LEN; }
 int password_too_short    ( Password* psw ){ return psw->len < PASSWORD_MIN_LEN; }
 int password_has_uppercase( Password* psw ){ return psw->uppercase > 0; }
@@ -69,8 +88,8 @@ int password_has_digit    ( Password* psw ){ return psw->digit     > 0; }
 int password_has_invalid  ( Password* psw ){ return psw->invalid   > 0; }
 int password_below_repeat_limit( Password* psw ){ return psw->illegal_repetitions < 1; }
 
-// returns 0 if invalid;
 int password_is_valid( Password* psw ){
+    // Verifica si cumple con todas las propiedes
     return ( password_below_repeat_limit(psw) &&
              password_has_uppercase     (psw) &&
              password_has_lowercase     (psw) &&
@@ -112,84 +131,99 @@ void password_push_invalid( Password* psw , char c ){
 
 
 void password_describe_errors( Password* psw , FILE* f ){
-    static const int    spaces   = 4;
-    static const char   mark     = '-';
-    static const char   mark2    = '^';
-    static const int    nextlvl  = spaces + spaces;
+    static const int    depth0  = 4;                // Indentación nivel 0.
+    static const int    depth1  = depth0 + depth0;  // Indentación nivel 1.
+    static const int    depth2  = depth1 + depth0;  // Indentación nivel 2.
+    static const char   space   = ' ';              // Espacio.
+    static const char   bar     = '-';              // Marca una región.
+    static const char   arrow   = '^';              // Marca un caracter.
+
+    // Verifica si se cumple cada propiedad. Imprime un mensaje si
+    // cuando alguna de ellas no se cumple.
 
     if( password_too_long(psw) ) {
-        fprintf( f , "%*c+ Tiene demasiados caracteres! (máximo: %d).\n" , spaces , ' ' , PASSWORD_MAX_LEN );
-        fprintf( f , "%*c%s\n" , nextlvl  , ' ' , psw->body );
-        fprintf( f , "%*c%*c" , nextlvl  , ' ' , PASSWORD_MAX_LEN , ' ');
-        // spotlight:
+        fprintf( f , "%*c+ Tiene demasiados caracteres! (máximo: %d).\n" 
+                               , depth0 , space , PASSWORD_MAX_LEN );
+        fprintf( f , "%*c%s\n" , depth1  , space , psw->body );
+        fprintf( f , "%*c%*c"  , depth1  , space , PASSWORD_MAX_LEN , space );
+
+        // Subraya la región que debe ser removida:
         int repeat = psw->len - (PASSWORD_MAX_LEN);
-        while( repeat-- > 0 ) fputc( mark , f );
+        while( repeat-- > 0 ) fputc( bar , f );
         fputc( '\n' , f );
 
-        fprintf( f , "%*c%*csupera el límite permitido.\n" , nextlvl  , ' ' , PASSWORD_MAX_LEN+1 , ' ');
+        fprintf( f , "%*c%*csupera el límite permitido.\n" 
+                   , depth1  , space , PASSWORD_MAX_LEN+1 , space );
     }
+
     if( password_too_short(psw) )
-        fprintf( f , "%*c- Tiene muy pocos caracteres! (mínimo: %d).\n" , spaces , ' ' , PASSWORD_MIN_LEN );
+        fprintf( f , "%*c- Tiene muy pocos caracteres! (mínimo: %d).\n" , depth0 , space , PASSWORD_MIN_LEN );
 
     if( !password_has_uppercase(psw) )
-        fprintf( f , "%*c- No tiene letras mayúsculas.\n" , spaces , ' ' );
+        fprintf( f , "%*c- No tiene letras mayúsculas.\n" , depth0 , space );
 
     if( !password_has_lowercase(psw) )
-        fprintf( f , "%*c- No tiene letras minúsculas.\n" , spaces , ' ' );
+        fprintf( f , "%*c- No tiene letras minúsculas.\n" , depth0 , space );
 
     if( !password_has_special  (psw) )
-        fprintf( f , "%*c- No tiene caracteres especiales.\n" , spaces , ' ' );
+        fprintf( f , "%*c- No tiene caracteres especiales.\n" , depth0 , space );
 
     if( !password_has_digit(psw) )
-        fprintf( f , "%*c- No tiene digitos (números).\n" , spaces , ' ' );
+        fprintf( f , "%*c- No tiene digitos (números).\n" , depth0 , space );
 
     if(  password_has_invalid  (psw) ){
-        fprintf( f , "%*c+ tiene caracteres inválidos.(%d %s).\n" , spaces , ' ' , psw->invalid , psw->invalid < 2? "solo" : "de ellos" );
-        fprintf( f , "%*c%s\n" , nextlvl  , ' ' , psw->body );
-        fprintf( f , "%*c" , nextlvl  , ' ' );
-        // Prints the invalid sequences
+        fprintf( f , "%*c+ tiene caracteres inválidos.(%d %s).\n" 
+                               , depth0 , space , psw->invalid , psw->invalid < 2 ? "solo" : "de ellos" );
+        fprintf( f , "%*c%s\n" , depth1 , space , psw->body );
+        fprintf( f , "%*c"     , depth1 , space );
+
+        // Imprime dónde se encuentran los caracteres inválidos
         int count = 0;
         for( int i = 0 ; i < psw->len ; i += 1 ){
+            // Imprime '^' si el caracter es inválido, ' ' si es válido.
             if( count < psw->invalid && i == psw->invalids[count] ){
-                fputc( mark2 , f );
+                fputc( arrow , f );
+                // Actualiza el contador de caracteres ilegales. 
                 count += 1;
             } else
-                fputc( ' ' , f );
+                fputc( space , f );
         }
         fputc( '\n' , f );
-        fprintf( f , "%*cConsidere cambiarlos.\n" , nextlvl+spaces  , ' ' );
+        fprintf( f , "%*cConsidere cambiarlos.\n" , depth2  , space );
     }
 
     if( !password_below_repeat_limit(psw) ) {
-        fprintf( f , "%*c+ Repite más de %d veces un caracter.\n" , spaces , ' ' , REPEAT_LIMIT );
-        fprintf( f , "%*c%s\n" , nextlvl  , ' ' , psw->body );
-        fprintf( f , "%*c" , nextlvl  , ' ' );
+        fprintf( f , "%*c+ Repite más de %d veces un caracter.\n" , depth0 , space , REPEAT_LIMIT );
+        fprintf( f , "%*c%s\n" , depth1  , space , psw->body );
+        fprintf( f , "%*c"     , depth1  , space );
 
-        // Prints the repeated sequences
+        // Imprime dónde se encuentran las secuencias repetidas.
         int  count  = 0;
         int  i      = 0;
         int  rindex = 0;
         char found  = '\0';
-        // 'i's increments are implicit
+        // Incrementa el valor de 'i' de forma implícita.
         while( i < psw->len && count < psw->illegal_repetitions ){
-            // Prints each bad repetition:
+            // Obtiene los índices de las repeticiones ilegales.
             rindex = psw->repeats[count];
             found  = psw->body[ rindex ];
 
-            // skip until reach the repetition:
+            // Descarta los caracters hasta conseguir la región de repetición.
             for( ; i < psw->len && i < rindex ; i += 1 )
-                fputc( ' ' , f );
+                fputc( space , f );
 
-            // marks those repeated:
+            // Indica dónde están los repetidos al imprimir '^'
             for( ; i < psw->len && found == psw->body[i]; i += 1 )
-                fputc( mark2 , f );
+                fputc( arrow , f );
 
+            // Actualiza el contador de símbolos repetidos
             count += 1;
         }
 
         fputc( '\n' , f );
-        fprintf( f , "%*cConsidere removerlos.\n" , nextlvl+spaces, ' ' );
+        fprintf( f , "%*cConsidere removerlos.\n" , depth2 , space );
     }
+
 }
 
 char* password_str( Password* psw ){ return psw->body; }
