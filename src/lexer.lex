@@ -1,11 +1,13 @@
 %option noyywrap
+%option noinput
+%option nounput
 
 %{
 
 // Preliminar C Code here
 #include <stdio.h>
-#include "psw.tab.h"
-#include "password.h"
+#include "parser.tab.h"
+#include "types/password.h"
 
 #define ECHO printf( "MATCH: %s\n", yytext )
 
@@ -13,9 +15,11 @@
 extern void yyerror( void* );
 extern void reset_password ( Password* psw );
 extern void password_resume( Password* psw );
+extern int  fileno(FILE *__stream) __THROW __wur;
 
 // Globals:
 extern Password* global_psw;
+extern YYSTYPE yylval;
 
 %}
 

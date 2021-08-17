@@ -17,7 +17,7 @@ void password_init( Password* psw ){
     psw->illegal_repetitions = 0;   // linked with repeats.
 }
 
-int password_from_str( Password* psw , char* str ){
+void password_from_str( Password* psw , char* str ){
     password_init( psw );
     char* head;
     for( head = str ; *head != '\0' ; head += 1 )
@@ -112,15 +112,11 @@ void password_push_invalid( Password* psw , char c ){
 
 
 void password_describe_errors( Password* psw , FILE* f ){
-    static const char   prompt[] = "Password: ";
-    static const size_t offset   = sizeof(prompt) / sizeof(char);
-    static const size_t spaces   = 4;
+    static const int    spaces   = 4;
     static const char   mark     = '-';
     static const char   mark2    = '^';
-    size_t nextlvl = spaces + spaces;
+    static const int    nextlvl  = spaces + spaces;
 
-    // Shows the strings like: Password: something
-    //fprintf( f , "%s%s" , prompt , psw->body );
     if( password_too_long(psw) ) {
         fprintf( f , "%*c+ Tiene demasiados caracteres! (máximo: %d).\n" , spaces , ' ' , PASSWORD_MAX_LEN );
         fprintf( f , "%*c%s\n" , nextlvl  , ' ' , psw->body );

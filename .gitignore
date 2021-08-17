@@ -1,0 +1,11 @@
+*.txt
+*.tab.h
+*.tab.c
+*.o
+*.output
+*.a
+*.so
+*.yy.c
+*.out
+
+target/*

@@ -2,9 +2,8 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "password.h"
+#include "types/password.h"
 #define YYSTYPE char
-#define PROMPT  "Ingrese su contraseña:\n    "
 extern int yylex();
 
 Password* global_psw;
@@ -52,48 +51,22 @@ Good
 
 %%
 
-void reset_password( Password* psw ){
-    password_init( psw );
-}
-
-void password_resume( Password* psw ){
-    if( password_is_valid(psw) ) {
-        printf( "\n" );
-        printf( "    * La contraseña ingresada ( %s ) es válida.\n\n" , password_str(psw) );
-    }
-    else {
-        fprintf( stderr , "\n" );
-        fprintf( stderr , "    . Contraseña: %s\n" , password_str(psw) );
-        fprintf( stderr , "\n" );
-
-        password_describe_errors( psw , stderr );
-        fprintf( stderr , "\n" );
-    }
-}
 
 void yyerror(const char* s) {
     fprintf( stderr , "Error de sitaxis: %s\n" , s );
     exit( 1 );
 }
 
-void report_and_prepare( Password* psw ){
-
-    password_commit(global_psw);
-    password_resume(global_psw);
-    reset_password(global_psw); 
-    printf( PROMPT );
-}
-
-int main(){
-    // Set-up:
-    Password usr_psw;
-    global_psw = &usr_psw;
-
-    // Run:
-    reset_password(global_psw);
-    printf( PROMPT );
-    yyparse();
-    return 0;
-}
+//int main(){
+//    // Set-up:
+//    Password usr_psw;
+//    global_psw = &usr_psw;
+//
+//    // Run:
+//    reset_password(global_psw);
+//    printf( PROMPT );
+//    yyparse();
+//    return 0;
+//}
 
 

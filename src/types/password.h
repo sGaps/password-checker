@@ -27,7 +27,7 @@ typedef struct password {
 } Password;
 
 void password_init    ( Password* psw );
-int  password_from_str( Password* psw , char* str ); // Auto-commit
+void password_from_str( Password* psw , char* str ); // Auto-commit
 
 int password_is_valid     ( Password* psw );
 int password_too_long     ( Password* psw );
