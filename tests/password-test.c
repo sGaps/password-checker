@@ -1,7 +1,7 @@
 /// @file password-test.c
 /// @brief Contiene pruebas para el tipo de datos `Password` definido
 ///        en `src/types/password.h`
-/// @author Gabriel Peraza
+/// @author Gabriel Peraza. CI: 26929687
 /// @version 0.1.0
 /// @date 2021-08-17
 

@@ -1,9 +1,8 @@
 %{
 
 /// @file parser.y
-/// @brief Contiene la gramática del parser junto
-///        
-/// @author Gabriel Peraza
+/// @brief Contiene la gramática del parser.
+/// @author Gabriel Peraza. CI: 26929687
 /// @version 0.1.0
 /// @date 2021-08-17
 

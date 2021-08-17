@@ -1,3 +1,9 @@
+/// @file password.c
+/// @brief Contiene las definiciones de las operaciones Password.
+/// @author Gabriel Peraza. CI: 26929687
+/// @version 0.1.0
+/// @date 2021-08-17
+
 #include <stdio.h>
 #include <string.h>
 #include "password.h"

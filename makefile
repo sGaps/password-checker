@@ -1,6 +1,6 @@
 # @file makefile
 # @brief archivo empleado para la compilación
-# @author Gabriel Peraza
+# @author Gabriel Peraza. CI: 26929687
 # @version 0.1.0
 # @date 2021-08-17
 
