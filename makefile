@@ -1,4 +1,4 @@
-CC	   := gcc
+CC     := gcc
 FLEX   := flex
 BISON  := bison
 
@@ -16,6 +16,8 @@ OBIN_DIR   := $(OBJS_DIR)/src-bin
 
 OTST_DIR   := $(OBJS_DIR)/tests
 XTST_DIR   := $(TARGET_DIR)/tests
+
+PKG_DIR := package
 
 .PHONY: default
 
@@ -81,4 +83,14 @@ password-test: prelude | $(OSRC_DIR)/types/password.o
 
 tests: password-test
 	@echo -e "Test are availables on $(TARGET_DIR)/tests/"
+
+clean-package:
+	rm -rf $(PKG_DIR)
+
+package: clean
+	@echo ""
+	@echo -e "Prepare to send"
+	mkdir -p $(PKG_DIR)
+	zip -r $(PKG_DIR)/package.zip makefile src/ src-bin/ tests/ 
+	@echo -e "Remember: you should update all directories that are seen by this tool before send this package!"
 

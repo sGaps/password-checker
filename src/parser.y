@@ -7,9 +7,10 @@
 extern int yylex();
 
 Password* global_psw;
+
 void reset_password    ( Password* psw );
 void report_and_prepare( Password* psw );
-void password_resume( Password* psw );
+void password_resume   ( Password* psw );
 void yyerror(const char* s);
 
 %}
@@ -56,17 +57,4 @@ void yyerror(const char* s) {
     fprintf( stderr , "Error de sitaxis: %s\n" , s );
     exit( 1 );
 }
-
-//int main(){
-//    // Set-up:
-//    Password usr_psw;
-//    global_psw = &usr_psw;
-//
-//    // Run:
-//    reset_password(global_psw);
-//    printf( PROMPT );
-//    yyparse();
-//    return 0;
-//}
-
 
