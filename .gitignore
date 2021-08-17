@@ -7,7 +7,7 @@
 *.so
 *.yy.c
 *.out
-package/*
-prev/*
 
+package/*
+xtests/*
 target/*

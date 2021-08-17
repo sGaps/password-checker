@@ -32,6 +32,11 @@ It will create a new folder called `package` which will contain a zip file with 
 
 > _**Note:**_ _the zip file will only cointain: the `makefile` and the subdirectories `src/`, `src-bin/` and `tests/*`._
 
+change the name of the zip-file by using:
+```
+make package ZIPFILE=compressed
+```
+And it will create the file `package/compressed.zip`
 
 ### Remove the generated files
 
@@ -39,5 +44,4 @@ Clean the directory by typing:
 ```
 make clean
 ```
-
 
