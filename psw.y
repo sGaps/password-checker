@@ -57,15 +57,17 @@ void reset_password( Password* psw ){
 }
 
 void password_resume( Password* psw ){
-    if( password_is_valid(psw) )
-        printf( "La contraseña ingresada es válida.\n" );
+    if( password_is_valid(psw) ) {
+        printf( "\n" );
+        printf( "    * La contraseña ingresada ( %s ) es válida.\n\n" , password_str(psw) );
+    }
     else {
-        printf( "\n" );
-        printf( "    . Contraseña: %s\n" , password_str(psw) );
-        printf( "\n" );
+        fprintf( stderr , "\n" );
+        fprintf( stderr , "    . Contraseña: %s\n" , password_str(psw) );
+        fprintf( stderr , "\n" );
 
-        password_describe_errors( psw , stdout );
-        printf( "\n" );
+        password_describe_errors( psw , stderr );
+        fprintf( stderr , "\n" );
     }
 }
 

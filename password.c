@@ -124,7 +124,7 @@ void password_describe_errors( Password* psw , FILE* f ){
     if( password_too_long(psw) ) {
         fprintf( f , "%*c+ Tiene demasiados caracteres! (máximo: %d).\n" , spaces , ' ' , PASSWORD_MAX_LEN );
         fprintf( f , "%*c%s\n" , nextlvl  , ' ' , psw->body );
-        fprintf( f , "%*c%*c" , nextlvl  , ' ' , PASSWORD_MAX_LEN+1 , ' ');
+        fprintf( f , "%*c%*c" , nextlvl  , ' ' , PASSWORD_MAX_LEN , ' ');
         // spotlight:
         int repeat = psw->len - (PASSWORD_MAX_LEN+1);
         while( repeat-- > 0 ) fputc( mark , f );
