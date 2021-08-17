@@ -1,34 +1,3 @@
-## Common
-#CC     := gcc
-#DEBUG  := -g -O0
-#COMMON := $(DEBUG) -Wall -std=c11
-#LIBFL  := $(COMMON) -c 
-#BINFL  := $(COMMON)
-#
-## Directories
-#SRC_DIRS  := src
-#BIN_DIRS  := src-bin
-#
-## use:
-## bison -d file.y --output=dir/file.tab.c
-## first bisons, then flexes, compile and generate binaries.
-#MAIN   := parser.c
-#BISONS := $(foreach sdir, $(SRC_DIRS) $(BIN_DIRS) , $(wildcard $(sdir)/*.y))
-#FLEXES := $(foreach sdir, $(SRC_DIRS) $(BIN_DIRS) , $(wildcard $(srdir)*.lex))
-#
-#BINS   = $(MAIN)
-#SRCS   = $(foreach sdir, $(SRC_DIRS)  ,$(wildcard $(sdir)/*.c))
-#TESTS := $(foreach tdir, $(TEST_DIRS) ,$(wildcard $(tdir)/*.c))
-#
-#TARGET_DIR  := target
-#OBJS_DIR    := $(TARGET_DIR)/objs
-#TARGET_TREE := $(addprefix $(OBJS_DIR)/,$(SRC_DIRS) $(BIN_DIRS))
-#OBJS         = $(foreach src, $(SRCS) $(BINS),$(OBJS_DIR)/$(basename $(src)).o)
-#
-## Files & Sources:
-#OSRC_DIR := $(OBJS_DIR)/$(SRC_DIR)
-#OBIN_DIR := $(OBJS_DIR)/$(BIN_DIR)
-
 CC	   := gcc
 FLEX   := flex
 BISON  := bison
@@ -41,14 +10,21 @@ EXTFLG := -lfl -ly
 
 TARGET	   := psw-check
 TARGET_DIR := target
-OBJS_DIR   := target/objs
-OSRC_DIR   := target/objs/src
-OBIN_DIR   := target/objs/src-bin
+OBJS_DIR   := $(TARGET_DIR)/objs
+OSRC_DIR   := $(OBJS_DIR)/src
+OBIN_DIR   := $(OBJS_DIR)/src-bin
+
+OTST_DIR   := $(OBJS_DIR)/tests
+XTST_DIR   := $(TARGET_DIR)/tests
 
 .PHONY: default
 
 default: build
 	@echo -e "Default Done"
+
+all: build tests
+	@echo -e "Everything Done"
+
 
 # Data-Type:
 $(OSRC_DIR)/types/password.o:
@@ -77,7 +53,7 @@ $(OBIN_DIR)/main.o:
 	$(CC) $(LIBFLG) src-bin/main.c -o $@ $(EXTFLG)
 
 prelude:
-	mkdir -p $(TARGET_DIR) $(OBJS_DIRS) $(OSRC_DIR) $(OBIN_DIR) $(OSRC_DIR)/types
+	mkdir -p $(TARGET_DIR) $(OBJS_DIRS) $(OSRC_DIR) $(OBIN_DIR) $(OSRC_DIR)/types $(OTST_DIR) $(XTST_DIR)
 
 build: prelude | $(OSRC_DIR)/types/password.o \
 			 	 $(OSRC_DIR)/interactive.o	  \
@@ -86,26 +62,23 @@ build: prelude | $(OSRC_DIR)/types/password.o \
 				 $(OBIN_DIR)/main.o
 	@echo -e "Final build"
 	$(CC) $(BINFLG) -o $(TARGET_DIR)/$(TARGET) $(BINFL) $| $(EXTFLG)
+	@echo -e "Build Done. executable available on $(TARGET_DIR)/"
+
+
+run: build
+	@echo -e ""
+	$(TARGET_DIR)/$(TARGET)
+
 
 clean:
 	rm -rf $(TARGET_DIR)
+	rm -rf $(wildcard src/*.yy.c) $(wildcard src/*.tab.c) $(wildcard src/*.tab.h)
+
+password-test: prelude | $(OSRC_DIR)/types/password.o
+	gcc $(LIBFLG) -o $(OTST_DIR)/password-test.o tests/password-test.c
+	gcc $(BINFLG) -o $(XTST_DIR)/$@ $(OTST_DIR)/password-test.o $|
 
 
-lexical-syntax-gen:
-#bison -d psw.y
-	bison --report all -d psw.y
-	flex  -o psw.lex.c psw.lex
+tests: password-test
+	@echo -e "Test are availables on $(TARGET_DIR)/tests/"
 
-password-test: password.o password.test.c
-	gcc -g -o $@ password.test.c password.o
-
-password.o: password.c password.h
-	gcc -g -c password.c -o $@
-
-psw: lexical-syntax-gen password.o
-#gcc -o $@ psw.lex.c psw.tab.c -lfl -lm 
-	gcc -g -o $@ psw.lex.c psw.tab.c password.o -lfl -lm 
-
-old-clean:
-#rm -rf parser.lex.c parser.tab.c parser.tab.h
-	rm -rf parser.lex.c

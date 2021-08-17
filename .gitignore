@@ -7,5 +7,6 @@
 *.so
 *.yy.c
 *.out
+prev/*
 
 target/*

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
-#include "password.h"
+#include "../src/types/password.h"
 
 #define PRINT(msg) fprintf( stderr , msg )
 
