@@ -18,11 +18,15 @@ OTST_DIR   := $(OBJS_DIR)/tests
 XTST_DIR   := $(TARGET_DIR)/tests
 
 PKG_DIR := package
+PACKAGE := package
 
 .PHONY: default
 
+force: | clean default
+
 default: build
 	@echo -e "Default Done"
+
 
 all: build tests
 	@echo -e "Everything Done"
@@ -91,6 +95,6 @@ package: clean
 	@echo ""
 	@echo -e "Prepare to send"
 	mkdir -p $(PKG_DIR)
-	zip -r $(PKG_DIR)/package.zip makefile src/ src-bin/ tests/ 
+	zip -r $(PKG_DIR)/$(PACKAGE).zip makefile src/ src-bin/ tests/ 
 	@echo -e "Remember: you should update all directories that are seen by this tool before send this package!"
 
