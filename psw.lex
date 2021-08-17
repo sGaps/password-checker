@@ -1,16 +1,20 @@
 %option noyywrap
 
 %{
+
 // Preliminar C Code here
-//#include <prelude.h>
 #include <stdio.h>
 #include "psw.tab.h"
 #include "password.h"
 
 #define ECHO printf( "MATCH: %s\n", yytext )
+
+// Shared functions:
 extern void yyerror( void* );
-extern void reset_password( Password* );
+extern void reset_password ( Password* psw );
 extern void password_resume( Password* psw );
+
+// Globals:
 extern Password* global_psw;
 
 %}
@@ -25,12 +29,12 @@ end     [\n]|[\n\r]|[\r]
 
 %%
 
-{noperm}    { yylval = yytext[0]; printf("NOP(0:%c): %s\n",yytext[0],yytext); return NOPERM;   }
-{upper}     { yylval = yytext[0]; printf("UPP(0:%c): %s\n",yytext[0],yytext); return UPPER;    }
-{lower}     { yylval = yytext[0]; printf("LOW(0:%c): %s\n",yytext[0],yytext); return LOWER;    }
-{special}   { yylval = yytext[0]; printf("SPC(0:%c): %s\n",yytext[0],yytext); return SPECIAL;  }
-{digit}     { yylval = yytext[0]; printf("DIG(0:%c): %s\n",yytext[0],yytext); return DIGIT;    }
-{end}       { yylval = yytext[0]; printf("END(0:%c): %s\n",yytext[0],yytext); return END;      }
+{noperm}    { yylval = yytext[0]; return NOPERM;   }
+{upper}     { yylval = yytext[0]; return UPPER;    }
+{lower}     { yylval = yytext[0]; return LOWER;    }
+{special}   { yylval = yytext[0]; return SPECIAL;  }
+{digit}     { yylval = yytext[0]; return DIGIT;    }
+{end}       { yylval = yytext[0]; return END;      }
 <<EOF>>     { yyterminate();    }
 
 %%

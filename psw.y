@@ -4,15 +4,16 @@
 #include <stdlib.h>
 #include "password.h"
 #define YYSTYPE char
+#define PROMPT  "Ingrese su contraseña:\n    "
 extern int yylex();
 
 Password* global_psw;
-void reset_password( Password* psw );
+void reset_password    ( Password* psw );
+void report_and_prepare( Password* psw );
 void password_resume( Password* psw );
 void yyerror(const char* s);
 
 %}
-
 
 %token NOPERM
 %token UPPER
@@ -26,8 +27,8 @@ void yyerror(const char* s);
 %%
 
 Password
-    : Password END      { password_commit(global_psw); password_resume(global_psw); reset_password(global_psw); }
-    | Password List END { password_commit(global_psw); password_resume(global_psw); reset_password(global_psw); }
+    : Password END      { report_and_prepare(global_psw);}
+    | Password List END { report_and_prepare(global_psw);}
     |
     ;
 
@@ -59,15 +60,28 @@ void password_resume( Password* psw ){
     if( password_is_valid(psw) )
         printf( "La contraseña ingresada es válida.\n" );
     else {
-        printf( "Contraseña: %s\n" , password_str(psw) );
+        printf( "\n" );
+        printf( "    . Contraseña: %s\n" , password_str(psw) );
+        printf( "\n" );
+
         password_describe_errors( psw , stdout );
+        printf( "\n" );
     }
 }
 
 void yyerror(const char* s) {
-    fprintf(stderr, "Error de sitaxis: %s\n",s);
-    exit(1);
+    fprintf( stderr , "Error de sitaxis: %s\n" , s );
+    exit( 1 );
 }
+
+void report_and_prepare( Password* psw ){
+
+    password_commit(global_psw);
+    password_resume(global_psw);
+    reset_password(global_psw); 
+    printf( PROMPT );
+}
+
 int main(){
     // Set-up:
     Password usr_psw;
@@ -75,6 +89,7 @@ int main(){
 
     // Run:
     reset_password(global_psw);
+    printf( PROMPT );
     yyparse();
     return 0;
 }
