@@ -8,7 +8,7 @@ LIBFLG := $(COMMON) -c
 BINFLG := $(COMMON)
 EXTFLG := -lfl -ly
 
-TARGET	   := psw-check
+TARGET	   := password-checker
 TARGET_DIR := target
 OBJS_DIR   := $(TARGET_DIR)/objs
 OSRC_DIR   := $(OBJS_DIR)/src

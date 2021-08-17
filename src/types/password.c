@@ -41,7 +41,7 @@ void password_push_char( Password* psw , char c ){
 
 // returns 1 if all done correctly, 0 otherwise
 static int password_priv_push_char( Password* psw , char c ){
-    if( psw->len > PASSWORD_BUFFER-1 ) return 0;
+    if( psw->len >= PASSWORD_BUFFER-1 ) return 0;
     
     // Updates repetition count:
     if( psw->len > 0 && psw->body[psw->len-1] == c ) {

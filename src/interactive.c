@@ -2,7 +2,6 @@
 #include "interactive.h"
 #include "types/password.h"
 
-//#define PROMPT  "Ingrese su contraseña:\n    "
 char* PROMPT = "Ingrese su contraseña:\n    ";
 
 void reset_password( Password* psw ){
