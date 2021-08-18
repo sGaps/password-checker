@@ -109,7 +109,12 @@ build: prelude | $(OSRC_DIR)/types/password.o \
 				 $(OBIN_DIR)/main.o
 	@echo -e "$(BL)Compilando Ejecutable (.out):$(RS)"
 	$(CC) $(BINFLG) -o $(TARGET_DIR)/$(TARGET) $(BINFL) $| $(EXTFLG)
-	@echo -e "$(BL)Hecho.\narchivo ejectuable disponible en el directorio:$(RS) $(TARGET_DIR)/"
+	@echo -e "$(BL)Hecho.$(RS)"
+	@echo -e "$(BL)El archivo ejectuable está disponible en el directorio:$(RS) $(TARGET_DIR)/"
+	@echo -e "$(BL)puede ejecutarlo con la instrucción $(RS)"
+	@echo -e "    $(TARGET_DIR)/$(TARGET)"
+	@echo -e "$(BL)y también, con el comando:$(RS)"
+	@echo -e "    make run"
 	@echo -e ""
 
 # Compila y ejecuta el programa generado
