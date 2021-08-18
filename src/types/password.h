@@ -32,6 +32,7 @@
 
 /// @brief Tipo de datos que modela las contraseñas. junto
 ///        a sus propiedades.
+///        **NOTA:** Sólo soporta caracteres ASCII.
 typedef struct password {
     // Info:
     unsigned short  uppercase;              ///< número minúsculas en body.

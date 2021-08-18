@@ -42,6 +42,8 @@ extern YYSTYPE   yylval;
 //          y otros =>    ! # $ , / : ˆ ( ) { } "; % + ? < > ∼ º ¿ ¡ á é ı́ ó ú ñ Ñ |
 // end:     Coincide con fin de línea.
 
+// NOTA: Los caracteres multi-bytes se mostrarán como caracteres desconocidos '�'
+//       Ya que las contraseñas sólo tienen soporte para los caracteres ASCII.
 
 %}
 
