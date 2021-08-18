@@ -144,6 +144,9 @@ void password_push_digit    ( Password* psw , char c );
 void password_push_invalid  ( Password* psw , char c );
 
 /// @brief Describe los errores de la cadena en la salida estándar.
+///        **NOTA**: Sólo puede resaltar los caracteres ASCII. los caracteres anchos
+///        (áéíóúñÑ) ocupan 2 bytes cada uno. No asegura que los caracteres ínvalidos
+///        sean subrayados, pero se reportará que hay caracteres inválidos.
 /// @param psw. Cadena de entrada.
 /// @param f.   stream de salida.
 void password_describe_errors( Password* psw , FILE* f );

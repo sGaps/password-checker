@@ -20,16 +20,16 @@ static int password_priv_push_char( Password* psw , char c );
 
 void password_init( Password* psw ){
     // Reinicia todos los contadores internos
-    psw->len       = 0;             // relacionado con body.
     psw->uppercase = 0;
     psw->lowercase = 0;
     psw->special   = 0;
     psw->digit     = 0;
 
-    psw->invalid         = 0;       // relacionado con invalids.
-    psw->last_repetition = 0;
-
+    psw->invalid             = 0;   // relacionado con invalids.
+    psw->last_repetition     = 0;
     psw->illegal_repetitions = 0;   // relacionado con repeats.
+
+    psw->len = 0;                   // relacionado con body.
 }
 
 void password_from_str( Password* psw , char* str ){
@@ -136,6 +136,13 @@ void password_push_invalid( Password* psw , char c ){
 }
 
 
+
+// NOTE: Sólo puede resaltar los caracteres ASCII. aquellos caracteres anchos
+//       (wide) tales como áéíóúñÑ usan dos bytes para ser representados.
+
+// NOTE: En el caso de encontrar caracteres de este tipo, el programa indicará
+//       que hay caracteres (de 1 byte) inválidos, pero no imprimirá correctamente
+//       la ubicación de los caracteres ilegales.
 void password_describe_errors( Password* psw , FILE* f ){
     static const int    depth0  = 4;                // Indentación nivel 0.
     static const int    depth1  = depth0 + depth0;  // Indentación nivel 1.
