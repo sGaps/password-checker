@@ -12,12 +12,13 @@
 
 // Preliminar C Code here
 #include <stdio.h>
+#include <string.h> //TODO: Delete later
 #include "parser.tab.h"
 #include "interactive.h"
 
 /// @brief macro creada para depurar las ocurrencias
 ///        obtenidas de la entrada estándar.
-#define ECHO printf( "MATCH: %s\n", yytext )
+#define ECHO printf( "(MATCH: %s, LEN: %ld )\n", yytext , strlen(yytext) )
 
 // Funciones compartidas:
 extern void yyerror( void* );
@@ -27,6 +28,21 @@ extern int  fileno(FILE *__stream) __THROW __wur;
 // Globals:
 extern YYSTYPE   yylval;
 
+// Patrones de búsqueda:
+// --------------------
+
+// upper:   Concide con Mayúsculas.
+// lower:   Concide con Minúsculas.
+// digit:   Concide con dígitos.
+// special: Concide con caracteres especiales permitidos.
+// white:   Coincide con espacios en blanco.
+// wide:    Coincide con caracteres multi-bytes no permitidos en una contraseña.
+// noperm:  Coincide con los caracteres no permitidos: No es Mayúscula,
+//          Ni Minúscula, Ni dígito, pero puede ser espacio en blanco, un caracter multi-byte (wide)
+//          y otros =>    ! # $ , / : ˆ ( ) { } "; % + ? < > ∼ º ¿ ¡ á é ı́ ó ú ñ Ñ |
+// end:     Coincide con fin de línea.
+
+
 %}
 
 upper   [A-Z]
@@ -34,7 +50,8 @@ lower   [a-z]
 digit   [0-9]
 special [\=\*\-\_\.\@\&]
 white   [ \t]
-noperm  [^A-Za-z0-9\=\*\-\_\.\@\&\n]|{white}
+wide    "á"|"é"|"í"|"ó"|"ú"|"ñ"|"Ñ"|"’"|"‘"|"¿"|"¡"|"º"
+noperm  {wide}|{white}|[^A-Za-z0-9\=\*\-\_\.\@\&\n]
 end     [\n]|[\n\r]|[\r]
 
 %%

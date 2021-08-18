@@ -134,7 +134,7 @@ password-test: prelude | $(OSRC_DIR)/types/password.o
 
 # Construye todos los casos de pruebas
 tests: password-test
-	@echo -e "$(BL)Ejecutables de pruebas disponibles en el directorio:$(RS) $(TARGET_DIR)/tests/"
+	@echo -e "$(BL)Ejecutables de pruebas disponibles en el directorio:$(RS) $(XTST_DIR)/"
 	@echo -e ""
 
 # Remueve los archivos generados para distrubución
